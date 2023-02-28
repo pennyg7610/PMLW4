@@ -25,18 +25,42 @@ https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
 
 The data for this project comes from this source: http://groupware.les.inf.puc-rio.br/har. 
 
+## Loading and cleaning data
 
-
+Install packages, load and set seed
 ```{r cars}
-summary(cars)
+library(caret)
+library(randomForest)
+library(rpart)
+library(ggplot2)
+
+set.seed(250)
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
+Load data
+```{r}
+training_data <-read.csv("pml-training.csv")
+test_data <-read.csv("pml-testing.csv")
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+dim(training_data)
+dim(test_data)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Clean data
+```{r}
+
+filter
+
+```
+
+
+## 
+
+
+
+
+
+
+
+
