@@ -32,8 +32,10 @@ Install packages, load and set seed
 library(caret)
 library(randomForest)
 library(rpart)
+library(rpart.plot)
 library(ggplot2)
 library(dplyr)
+library(gbm)
 set.seed(250)
 ```
 
@@ -70,17 +72,80 @@ test_data<-test_data[,-(1:5)]
 
 ```
 
-Partition of the Data
+## Partition of the Data
 ```{r}
+in_train  <- createDataPartition(training_data$classe, p=0.75, list=FALSE)
+train_set <- training_data[ in_train, ]
+test_set  <- training_data[-in_train, ]
+
+dim(train_set)
 
 ```
 
 
-## 
+## Building of the Models
+
+Decision Tree:
+```{r}
+
+decisiontree <- rpart(classe~., data = train_set, method = 'class')
+rpart.plot(decisiontree)
+```
+Making a prediction:
+```{r}
+predict_decisiontree <-predict(decisiontree, newdata=test_set, type = 'class')
+
+#counts number classified into classe
+table_mat <- table(test_set$classe, predict_decisiontree)
+table_mat
+
+```
+```{r}
+conf_matrix<-confusionMatrix(predict_decisiontree, factor(test_set$classe))
+conf_matrix
+```
+Accuracy is at 73%
+
+
+Random Forest:
+```{r}
+
+rfmodel <- randomForest(classe ~ ., data=train_set)
+
+model <- randomForest(formula = classe ~ ., data = train_set)
+
+
+#display fitted model
+model
+
+Use model to predict class in validation set (NEOTesting)
+predictionRF <- predict(fitRF, NEOTesting, type = "class")
+
+Estimate the errors of the prediction algorithm in the Random Forest
+confusionMatrix(NEOTesting$classe, predictionRF)
+
+
+ctrl_RF <- trainControl(method = "repeatedcv", number = 5, repeats = 2)
+fit_RF  <- train(classe ~ ., data = train_set, method = "rf",
+                  trControl = ctrl_RF, verbose = FALSE)
+fit_RF$finalModel
+
+
+```
 
 
 
 
+Generalized Boosted Model:
+
+```{r}
+
+ctrl_GBM <- trainControl(method = "repeatedcv", number = 5, repeats = 2)
+fit_GBM  <- train(classe ~ ., data = train_set, method = "gbm",
+                  trControl = ctrl_GBM, verbose = FALSE)
+fit_GBM$finalModel
+
+```
 
 
 
