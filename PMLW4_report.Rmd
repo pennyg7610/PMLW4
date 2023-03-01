@@ -33,7 +33,7 @@ library(caret)
 library(randomForest)
 library(rpart)
 library(ggplot2)
-
+library(dplyr)
 set.seed(250)
 ```
 
@@ -47,10 +47,31 @@ dim(training_data)
 dim(test_data)
 ```
 
-Clean data
+Clean data: Remove all columns with NAs, Remove near zero variance predictos, remove ID variables. 
 ```{r}
+#remove columns with NA
 
-filter
+training_data <- training_data %>% select_if(~ !any(is.na(.)))
+test_data <- test_data %>% select_if(~ !any(is.na(.)))
+
+dim(training_data)
+dim(test_data)
+
+
+#remove near zero variance predictors with caret package
+nzv <- nearZeroVar(training_data)
+
+training_data<- training_data[,-nzv]
+test_data<- test_data[,-nzv]
+
+#remove ID variables
+training_data<-training_data[,-(1:5)]
+test_data<-test_data[,-(1:5)]
+
+```
+
+Partition of the Data
+```{r}
 
 ```
 
