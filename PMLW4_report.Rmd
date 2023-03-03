@@ -109,39 +109,30 @@ Accuracy is at 73%
 
 Random Forest:
 ```{r}
-train_set$classe <- factor(train_set$classe)
-
-trControl <- trainControl(method = 'repeatedcv', number = 5)
-model <- train(classe ~ ., data=train_set, method = "rf" )
-
+set.seed(250)
+RFcontrol <- trainControl(method="cv", number=3, verboseIter=FALSE)
+model <- train(classe ~ ., data=train_set, method="rf", trControl=RFcontrol)
 model$finalModel
+```
 
-
-
+```{r}
 #Prediction
 predRF <- predict(model, newdata= test_set)
 RFconfusmatrix<- confusionMatrix(predRF, factor(test_set$classe))
 RFconfusmatrix
-
-
-ctrl_RF <- trainControl(method = "repeatedcv", number = 5, repeats = 2)
-fit_RF  <- train(classe ~ ., data = train_set, method = "rf",  trControl = ctrl_RF, verbose = FALSE)
-
-
-
 ```
+Accuracy for the Random Forest model reflects 99.8% and is the best of the two options to be utilized for the quiz. 
 
 
 
-
-Generalized Boosted Model:
+Applying Model to Quiz:
 
 ```{r}
 
-ctrl_GBM <- trainControl(method = "repeatedcv", number = 5, repeats = 2)
-fit_GBM  <- train(classe ~ ., data = train_set, method = "gbm",
-                  trControl = ctrl_GBM, verbose = FALSE)
-fit_GBM$finalModel
+test_data <-read.csv("pml-testing.csv")
+
+quiz_prediction <- predict(model, newdata= test_data)
+quiz_prediction
 
 ```
 
