@@ -109,26 +109,24 @@ Accuracy is at 73%
 
 Random Forest:
 ```{r}
+train_set$classe <- factor(train_set$classe)
 
-rfmodel <- randomForest(classe ~ ., data=train_set)
+trControl <- trainControl(method = 'repeatedcv', number = 5)
+model <- train(classe ~ ., data=train_set, method = "rf" )
 
-model <- randomForest(formula = classe ~ ., data = train_set)
+model$finalModel
 
 
-#display fitted model
-model
 
-Use model to predict class in validation set (NEOTesting)
-predictionRF <- predict(fitRF, NEOTesting, type = "class")
-
-Estimate the errors of the prediction algorithm in the Random Forest
-confusionMatrix(NEOTesting$classe, predictionRF)
+#Prediction
+predRF <- predict(model, newdata= test_set)
+RFconfusmatrix<- confusionMatrix(predRF, factor(test_set$classe))
+RFconfusmatrix
 
 
 ctrl_RF <- trainControl(method = "repeatedcv", number = 5, repeats = 2)
-fit_RF  <- train(classe ~ ., data = train_set, method = "rf",
-                  trControl = ctrl_RF, verbose = FALSE)
-fit_RF$finalModel
+fit_RF  <- train(classe ~ ., data = train_set, method = "rf",  trControl = ctrl_RF, verbose = FALSE)
+
 
 
 ```
