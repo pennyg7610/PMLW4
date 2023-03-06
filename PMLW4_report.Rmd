@@ -9,11 +9,11 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Overview
+# Overview
 
 The goal of this project is to predict the manner in which 6 participants did their exercise (sitting, sitting down, standing, standing up, walking). This is the "classe" variable in the training set. Other variables may be utilized to predict with. This report describes how the model was built, how cross validation was used, what I think the expected out of sample error is, and why I made the choices I did. This prediction model will also be used to predict 20 different test cases. 
 
-## How model is built and why only 2 models were built
+# How the models are built and why
 This project only utilizes two models: Decision Tree and Random Forest. The reason for this is due to the accuracy results obtained after running Random Forest. The final accuracy results for Decision Tree was 73% vs Random Forest with an accuracy of 99.8%. Seed was set at 250 for the course of this project. With a high accuracy rate after completing the Random Forest model the choice in which would provide the most accurate results was obvious. 
 
 The following sections for the rest of the project are broken down as follow:
@@ -27,7 +27,7 @@ The following sections for the rest of the project are broken down as follow:
 6. Final choice for which model to use
 
 
-## Data source information
+# Data source information
 The training data for this project is available here: 
 
 https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
@@ -38,9 +38,9 @@ https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
 
 The data for this project comes from this source: http://groupware.les.inf.puc-rio.br/har. 
 
-## Loading and cleaning data
+# Loading and cleaning data
 
-# Install packages, load and set seed
+## Install packages, load and set seed
 ```{r cars}
 library(caret)
 library(randomForest)
@@ -52,7 +52,7 @@ library(gbm)
 set.seed(250)
 ```
 
-# Load data
+## Load data
 ```{r}
 training_data <-read.csv("pml-training.csv")
 test_data <-read.csv("pml-testing.csv")
@@ -61,7 +61,7 @@ dim(training_data)
 dim(test_data)
 ```
 
-# Clean data: Remove all columns with NAs, Remove near zero variance predictos, remove ID variables. 
+## Clean data: Remove all columns with NAs, Remove near zero variance predictos, remove ID variables. 
 ```{r}
 #remove columns with NA
 
@@ -83,7 +83,7 @@ training_data<-training_data[,-(1:5)]
 test_data<-test_data[,-(1:5)]
 ```
 
-## Cross Validation
+# Cross Validation
 Utilized the caret package to partition the Data into training and test  datasets. P is set to .75 because I chose 75% of the whole data.
 
 ```{r}
@@ -94,15 +94,15 @@ test_set  <- training_data[-in_train, ]
 dim(train_set)
 ```
 
-## Building of the models
+# Building of the models
 
-# Decision Tree:
+## Decision Tree:
 ```{r}
 decisiontree <- rpart(classe~., data = train_set, method = 'class')
 rpart.plot(decisiontree)
 ```
 
-# Check for accuracy/ error rate:
+## Check for accuracy/ error rate:
 Test the model by using the predict function
 ```{r}
 predict_decisiontree <-predict(decisiontree, newdata=test_set, type = 'class')
@@ -112,17 +112,17 @@ The confusion matrix will compate predicted results to the original test dataset
 conf_matrix<-confusionMatrix(predict_decisiontree, factor(test_set$classe))
 conf_matrix
 ```
-# Results for the Decision Tree model is an accuracy of 73% with an error rate of 27%
+## Results for the Decision Tree model is an accuracy of 73% with an error rate of 27%
 
 
-# Random Forest:
+## Random Forest:
 ```{r}
 set.seed(250)
 RFcontrol <- trainControl(method="cv", number=3, verboseIter=FALSE)
 model <- train(classe ~ ., data=train_set, method="rf", trControl=RFcontrol)
 model$finalModel
 ```
-# Check for accuracy/ error rate:
+## Check for accuracy/ error rate:
 Test the model by using the predict function. The confusion matrix will compate predicted results to the original test dataset and will provide the accuracy and error rate. 
 
 ```{r}
@@ -130,15 +130,15 @@ predRF <- predict(model, newdata= test_set)
 RFconfusmatrix<- confusionMatrix(predRF, factor(test_set$classe))
 RFconfusmatrix
 ```
-# Results for the Random Forest model is an accuracy of 99.8% with an error rate of .2%. 
+## Results for the Random Forest model is an accuracy of 99.8% with an error rate of .2%. 
 
 
-## Final choice for which model to use
+# Final choice for which model to use:
 When comparing the two models the accuracy for the Random Forest model reflects 99.8% and is the best of the two options to be utilized. 
 
 
 
-Applying Model to Quiz:
+##Applying Model to Quiz:
 
 ```{r}
 test_data <-read.csv("pml-testing.csv")
